@@ -1,5 +1,5 @@
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
-const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
+const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const AuthenticationsTableTestHelper = require('../../../../tests/AuthenticationsTableTestHelper');
 const pool = require('../../database/postgres/pool');
 const container = require('../../container');
@@ -752,7 +752,7 @@ describe('HTTP server', () => {
       });
 
       it('should response 403 when given not owned reply', async () => {
-        ThreadsTableTestHelper.restoreComment(commentId);
+        CommentsTableTestHelper.restoreComment(commentId);
         const server = await createServer(container);
 
         const userPayload = {
