@@ -58,9 +58,10 @@ describe('ThreadUseCase', () => {
     const expectedThreadComments = [
       new CommentThread({
         id: 'comment-123',
-        content: 'thread comment',
+        content: 'comment thread',
         date: '2021-24-10T13:00:00',
         username: 'johndoe',
+        likeCount: 10,
       }, expectedReplies),
     ];
 
@@ -73,7 +74,16 @@ describe('ThreadUseCase', () => {
     }, expectedThreadComments);
 
     mockThreadRepository.getDetailThread = jest.fn(() => Promise.resolve(expectedDetailThread));
-    mockCommentRepository.getCommentsByThreadId = jest.fn(() => Promise.resolve(expectedThreadComments));
+    mockCommentRepository.getCommentsByThreadId = jest.fn(() => Promise.resolve([
+      {
+        id: 'comment-123',
+        content: 'comment thread',
+        date: '2021-24-10T13:00:00',
+        username: 'johndoe',
+        like_count: 10,
+        is_delete: false,
+      },
+    ]));
     mockReplyRepository.getRepliesByCommentId = jest.fn(() => Promise.resolve(expectedReplies));
 
     const threadUseCase = new ThreadUseCase({
@@ -118,6 +128,7 @@ describe('ThreadUseCase', () => {
         content: '**komentar telah dihapus**',
         date: '2021-24-10T13:00:00',
         username: 'johndoe',
+        likeCount: 10,
       }, expectedReplies),
     ];
 
@@ -136,6 +147,7 @@ describe('ThreadUseCase', () => {
         content: 'comment thread',
         date: '2021-24-10T13:00:00',
         username: 'johndoe',
+        like_count: 10,
         is_delete: true,
       },
     ]));

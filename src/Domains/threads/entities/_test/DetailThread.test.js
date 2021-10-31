@@ -20,6 +20,7 @@ describe('DetailThread entity', () => {
       body: 'thread body',
       date: '2021-08-08T07:59:16.198Z',
       username: 'dicoding',
+      likeCount: '1',
     };
 
     expect(() => new DetailThread(payload, 123)).toThrowError('DETAIL_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
@@ -41,6 +42,7 @@ describe('DetailThread entity', () => {
         content: 'comment thread',
         date: '2021-08-08T07:59:16.198Z',
         username: 'johndoe',
+        likeCount: 2,
       }, payloadReplies),
     ];
 

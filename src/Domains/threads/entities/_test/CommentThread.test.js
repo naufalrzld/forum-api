@@ -4,7 +4,7 @@ const ReplyThread = require('../ReplyThread');
 describe('CommentThread entity', () => {
   it('should throw error when did not contain needed property property', () => {
     const payload = {
-      id: 'reply-123',
+      id: 'comment-123',
       content: 'comment thread',
       date: '2021-08-08T07:59:16.198Z',
       username: 'dicoding',
@@ -15,10 +15,11 @@ describe('CommentThread entity', () => {
 
   it('should throw error when payload did not meet data type specification', () => {
     const payload = {
-      id: 'reply-123',
+      id: 'comment-123',
       content: 'comment thread',
       date: '2021-08-08T07:59:16.198Z',
       username: 'dicoding',
+      likeCount: '0',
     };
 
     expect(() => new CommentThread(payload, 123)).toThrowError('COMMENT_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
@@ -41,10 +42,11 @@ describe('CommentThread entity', () => {
     ];
 
     const payloadComment = {
-      id: 'reply-123',
+      id: 'comment-123',
       content: 'comment thread',
       date: '2021-08-08T07:59:16.198Z',
       username: 'dicoding',
+      likeCount: 10,
     };
 
     const commentThread = new CommentThread(payloadComment, payloadReplies);
@@ -53,6 +55,7 @@ describe('CommentThread entity', () => {
     expect(commentThread.content).toEqual(payloadComment.content);
     expect(commentThread.date).toEqual(payloadComment.date);
     expect(commentThread.username).toEqual(payloadComment.username);
+    expect(commentThread.likeCount).toEqual(payloadComment.likeCount);
     expect(commentThread.replies).toStrictEqual(payloadReplies);
   });
 });
