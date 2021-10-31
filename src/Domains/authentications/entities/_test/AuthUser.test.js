@@ -47,4 +47,4 @@ describe('a AuthUser entities', () => {
     expect(username).toEqual(payload.username);
     expect(password).toEqual(payload.password);
   });
-})
+});

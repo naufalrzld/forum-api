@@ -29,4 +29,4 @@ describe('a CredentialUser entities', () => {
     expect(credentialUser.id).toEqual(payload.id);
     expect(credentialUser.password).toEqual(payload.password);
   });
-})
+});

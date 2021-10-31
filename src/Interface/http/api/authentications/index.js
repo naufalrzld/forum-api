@@ -6,5 +6,5 @@ module.exports = {
   register: async (server, { container }) => {
     const authHandler = new AuthenticationsHandler(container);
     server.route(routes(authHandler));
-  }
-}
+  },
+};

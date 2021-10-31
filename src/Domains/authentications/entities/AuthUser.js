@@ -7,7 +7,7 @@ class AuthUser {
     this.username = username;
     this.password = password;
   }
-  
+
   _verifyPayload({ username, password }) {
     if (!username || !password) {
       throw new Error('AUTH_USER.NOT_CONTAIN_NEEDED_PROPERTY');

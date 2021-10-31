@@ -12,7 +12,7 @@ describe('JwtTokenManager', () => {
 
       const mockJwt = {
         generate: jest.fn().mockImplementation(() => 'mock_jwt'),
-      }
+      };
 
       const jwtTokenManager = new JwtTokenManager(mockJwt);
 
@@ -22,7 +22,7 @@ describe('JwtTokenManager', () => {
       expect(token).toEqual('mock_jwt');
     });
   });
-  
+
   describe('generateRefreshToken function', () => {
     it('should generate refresh token correctly', async () => {
       const payload = {
@@ -32,7 +32,7 @@ describe('JwtTokenManager', () => {
 
       const mockJwt = {
         generate: jest.fn().mockImplementation(() => 'mock_jwt'),
-      }
+      };
 
       const jwtTokenManager = new JwtTokenManager(mockJwt);
 

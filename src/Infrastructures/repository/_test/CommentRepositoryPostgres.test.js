@@ -4,7 +4,6 @@ const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const CommentRepositoryPostgres = require('../CommentRepositoryPostgres');
 const pool = require('../../database/postgres/pool');
 const CreatedComment = require('../../../Domains/comments/entities/CreatedComment');
-const CreatedThread = require('../../../Domains/threads/entities/CreatedThread');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 
 describe('CommentRepositoryPostgres', () => {
