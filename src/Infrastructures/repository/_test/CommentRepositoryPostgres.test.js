@@ -75,6 +75,20 @@ describe('CommentRepositoryPostgres', () => {
     });
   });
 
+  describe('getCommentsByThreadId function', () => {
+    it('should response with correct property', async () => {
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      const comment = await commentRepositoryPostgres.getCommentsByThreadId(threadPayload.id);
+
+      expect(comment[0].id).toBeDefined();
+      expect(comment[0].content).toBeDefined();
+      expect(comment[0].date).toBeDefined();
+      expect(comment[0].username).toBeDefined();
+      expect(comment[0].like_count).toBeDefined();
+    });
+  });
+
   describe('verifyCommentOwner', () => {
     it('should throw AuthorizationError when not owned comment', async () => {
       await CommentsTableTestHelper.restoreComment('comment-123');
