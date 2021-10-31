@@ -19,6 +19,8 @@ DomainErrorTranslator._directories = {
   'CREATE_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('terdapat tipe data yang tidak sesuai'),
   'CREATE_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('masukkan property yang dibutuhkan'),
   'CREATE_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('terdapat tipe data yang tidak sesuai'),
+  'CREATE_REPLY.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('masukkan property yang dibutuhkan'),
+  'CREATE_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('terdapat tipe data yang tidak sesuai'),
 };
 
 module.exports = DomainErrorTranslator;

@@ -3,7 +3,7 @@ const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres');
 const pool = require('../../database/postgres/pool');
-const CreatedComment = require('../../../Domains/comments/entities/CreatedComment');
+const CreatedReply = require('../../../Domains/replies/entities/CreatedReply');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 
 describe('ThreadRepositoryPostgres', () => {
@@ -59,7 +59,7 @@ describe('ThreadRepositoryPostgres', () => {
 
       const createdComment = await replyRepositoryPostgres.addReply(payload, 'comment-123', userPayload.id);
 
-      expect(createdComment).toStrictEqual(new CreatedComment({
+      expect(createdComment).toStrictEqual(new CreatedReply({
         id: 'reply-123',
         content: 'reply comment',
         owner: userPayload.id,

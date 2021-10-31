@@ -3,7 +3,7 @@ const AuthorizationError = require('../../../Commons/exceptions/AuthorizationErr
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
 const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
-const CreateComment = require('../../../Domains/comments/entities/CreateComment');
+const CreateReply = require('../../../Domains/replies/entities/CreateReply');
 const ReplyUseCase = require('../ReplyUseCase');
 
 describe('ReplyUseCase', () => {
@@ -38,7 +38,7 @@ describe('ReplyUseCase', () => {
     expect(mockThreadRepository.checkAvailabilityThread).toBeCalledWith('thread-123');
     expect(mockCommentRepository.checkAvailabilityComment).toBeCalledWith('comment-123');
     expect(mockReplyRepository.addReply).toBeCalledWith(
-      new CreateComment(useCasePayload),
+      new CreateReply(useCasePayload),
       'comment-123',
       'user-123',
     );
