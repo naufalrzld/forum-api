@@ -82,10 +82,15 @@ describe('CommentRepositoryPostgres', () => {
       const comment = await commentRepositoryPostgres.getCommentsByThreadId(threadPayload.id);
 
       expect(comment[0].id).toBeDefined();
+      expect(comment[0].id).not.toBeNull();
       expect(comment[0].content).toBeDefined();
+      expect(comment[0].content).not.toBeNull();
       expect(comment[0].date).toBeDefined();
+      expect(comment[0].date).not.toBeNull();
       expect(comment[0].username).toBeDefined();
+      expect(comment[0].username).not.toBeNull();
       expect(comment[0].like_count).toBeDefined();
+      expect(comment[0].like_count).not.toBeNull();
     });
   });
 
