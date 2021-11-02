@@ -8,6 +8,14 @@ const roures = (handler) => ([
     },
   },
   {
+    method: 'PUT',
+    path: '/threads/{threadId}/comments/{commentId}/likes',
+    handler: handler.putLikeUnlikeCommentHandler,
+    options: {
+      auth: 'forumapi_jwt',
+    },
+  },
+  {
     method: 'DELETE',
     path: '/threads/{threadId}/comments/{commentId}',
     handler: handler.deleteCommentHandler,

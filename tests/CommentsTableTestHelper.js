@@ -28,6 +28,17 @@ const CommentsTableTestHelper = {
     return result.rows;
   },
 
+  async findLikedComment(commentId, userId) {
+    const query = {
+      text: 'SELECT * FROM liked_comments WHERE comment_id = $1 AND user_id = $2',
+      values: [commentId, userId],
+    };
+
+    const result = await pool.query(query);
+
+    return result.rows;
+  },
+
   async deleteComment(id) {
     const query = {
       text: 'UPDATE comments SET is_delete = true WHERE id = $1',

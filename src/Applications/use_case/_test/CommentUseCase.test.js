@@ -39,6 +39,50 @@ describe('CommentUseCase', () => {
     );
   });
 
+  it('should orchestrating the like comment action correctly', async () => {
+    const mockThreadRepository = new ThreadRepository();
+    const mockCommentRepository = new CommentRepository();
+
+    mockThreadRepository.checkAvailabilityThread = jest.fn(() => Promise.resolve());
+    mockCommentRepository.checkAvailabilityComment = jest.fn(() => Promise.resolve());
+    mockCommentRepository.checkLikeComment = jest.fn(() => Promise.resolve(0));
+    mockCommentRepository.likeComment = jest.fn(() => Promise.resolve());
+
+    const commentUseCase = new CommentUseCase({
+      threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository,
+    });
+
+    await commentUseCase.likeUnlikeComment('thread-123', 'comment-123', 'user-123');
+
+    expect(mockThreadRepository.checkAvailabilityThread).toBeCalledWith('thread-123');
+    expect(mockCommentRepository.checkAvailabilityComment).toBeCalledWith('comment-123');
+    expect(mockCommentRepository.checkLikeComment).toBeCalledWith('comment-123', 'user-123');
+    expect(mockCommentRepository.likeComment).toBeCalledWith('comment-123', 'user-123');
+  });
+
+  it('should orchestrating the unlike comment action correctly', async () => {
+    const mockThreadRepository = new ThreadRepository();
+    const mockCommentRepository = new CommentRepository();
+
+    mockThreadRepository.checkAvailabilityThread = jest.fn(() => Promise.resolve());
+    mockCommentRepository.checkAvailabilityComment = jest.fn(() => Promise.resolve());
+    mockCommentRepository.checkLikeComment = jest.fn(() => Promise.resolve(1));
+    mockCommentRepository.unlikeComment = jest.fn(() => Promise.resolve());
+
+    const commentUseCase = new CommentUseCase({
+      threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository,
+    });
+
+    await commentUseCase.likeUnlikeComment('thread-123', 'comment-123', 'user-123');
+
+    expect(mockThreadRepository.checkAvailabilityThread).toBeCalledWith('thread-123');
+    expect(mockCommentRepository.checkAvailabilityComment).toBeCalledWith('comment-123');
+    expect(mockCommentRepository.checkLikeComment).toBeCalledWith('comment-123', 'user-123');
+    expect(mockCommentRepository.unlikeComment).toBeCalledWith('comment-123', 'user-123');
+  });
+
   it('should orchestrating the delete comment action correctly', async () => {
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();

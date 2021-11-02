@@ -94,7 +94,7 @@ describe('CommentRepositoryPostgres', () => {
     });
   });
 
-  describe('verifyCommentOwner', () => {
+  describe('verifyCommentOwner function', () => {
     it('should throw AuthorizationError when not owned comment', async () => {
       await CommentsTableTestHelper.restoreComment('comment-123');
 
@@ -107,6 +107,49 @@ describe('CommentRepositoryPostgres', () => {
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
 
       await expect(commentRepositoryPostgres.verifyCommentOwner('comment-123', userPayload.id)).resolves.not.toThrowError(AuthorizationError);
+    });
+  });
+
+  describe('likeComment function', () => {
+    it('should success like comment', async () => {
+      const fakeIdGenerator = () => '123';
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, fakeIdGenerator);
+
+      await commentRepositoryPostgres.likeComment('comment-123', userPayload.id);
+
+      const likedComment = await CommentsTableTestHelper.findLikedComment('comment-123', userPayload.id);
+
+      expect(likedComment).toHaveLength(1);
+    });
+  });
+
+  describe('checkLikeComment function', () => {
+    it('should return 0 when liked comment not available', async () => {
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      const likedComment = await commentRepositoryPostgres.checkLikeComment('comment-1234', userPayload.id);
+
+      expect(likedComment).toEqual(0);
+    });
+
+    it('should return greater than 0 when liked comment not available', async () => {
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      const likedComment = await commentRepositoryPostgres.checkLikeComment('comment-123', userPayload.id);
+
+      expect(likedComment).toBeGreaterThan(0);
+    });
+  });
+
+  describe('unlikeComment function', () => {
+    it('should success unlike comment', async () => {
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      await commentRepositoryPostgres.unlikeComment('comment-123', userPayload.id);
+
+      const likedComment = await CommentsTableTestHelper.findLikedComment('comment-123', userPayload.id);
+
+      expect(likedComment).toHaveLength(0);
     });
   });
 
