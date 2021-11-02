@@ -1,5 +1,5 @@
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
-const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
+const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const AuthenticationsTableTestHelper = require('../../../../tests/AuthenticationsTableTestHelper');
 const pool = require('../../database/postgres/pool');
 const container = require('../../container');
@@ -406,7 +406,7 @@ describe('HTTP server', () => {
       });
     });
 
-    describe('when POST /threads{threadId}/comments', () => {
+    describe('when POST /threads/{threadId}/comments', () => {
       it('should response 400 when request payload not cointain needed property', async () => {
         const server = await createServer(container);
 
@@ -487,6 +487,69 @@ describe('HTTP server', () => {
         expect(responseJson.data.addedComment).toBeDefined();
 
         commentId = responseJson.data.addedComment.id;
+      });
+    });
+
+    describe('when PUT /threads{threadId}/comments/{commentId}/likes', () => {
+      it('should response 401 when not given authentication', async () => {
+        const server = await createServer(container);
+
+        const response = await server.inject({
+          method: 'PUT',
+          url: `/threads/${threadId}/comments/${commentId}/likes`,
+        });
+
+        const responseJson = JSON.parse(response.payload);
+        expect(response.statusCode).toEqual(401);
+        expect(responseJson.message).toEqual('Missing authentication');
+      });
+
+      it('should response 404 when thread not available', async () => {
+        const server = await createServer(container);
+
+        const response = await server.inject({
+          method: 'PUT',
+          url: `/threads/thread-1234/comments/${commentId}/likes`,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const responseJson = JSON.parse(response.payload);
+        expect(responseJson.status).toEqual('fail');
+        expect(responseJson.message).toEqual('thread tidak tersedia');
+      });
+
+      it('should response 404 when comment not available', async () => {
+        const server = await createServer(container);
+
+        const response = await server.inject({
+          method: 'PUT',
+          url: `/threads/${threadId}/comments/comment-123/likes`,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const responseJson = JSON.parse(response.payload);
+        expect(responseJson.status).toEqual('fail');
+        expect(responseJson.message).toEqual('comment tidak tersedia');
+      });
+
+      it('should response 200 when given valid payload', async () => {
+        const server = await createServer(container);
+
+        const response = await server.inject({
+          method: 'PUT',
+          url: `/threads/${threadId}/comments/${commentId}/likes`,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const responseJson = JSON.parse(response.payload);
+        expect(response.statusCode).toEqual(200);
+        expect(responseJson.status).toEqual('success');
       });
     });
 
@@ -752,7 +815,7 @@ describe('HTTP server', () => {
       });
 
       it('should response 403 when given not owned reply', async () => {
-        ThreadsTableTestHelper.restoreComment(commentId);
+        CommentsTableTestHelper.restoreComment(commentId);
         const server = await createServer(container);
 
         const userPayload = {

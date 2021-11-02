@@ -31,7 +31,7 @@ class ThreadUseCase {
     });
 
     const threadComments = resultComments.map(({
-      id, username, date, content, is_delete,
+      id, username, date, content, like_count, is_delete,
     }) => {
       let msg = content;
       if (is_delete) msg = '**komentar telah dihapus**';
@@ -40,6 +40,7 @@ class ThreadUseCase {
         username,
         date,
         content: msg,
+        likeCount: Number(like_count),
       }, threadReplies);
     });
 

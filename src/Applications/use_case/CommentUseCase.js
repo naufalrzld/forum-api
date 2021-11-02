@@ -12,6 +12,17 @@ class CommentUseCase {
     return this._commentRepository.addComment(createComment, threadId, owner);
   }
 
+  async likeUnlikeComment(threadId, commentId, userId) {
+    await this._threadRepository.checkAvailabilityThread(threadId);
+    await this._commentRepository.checkAvailabilityComment(commentId);
+    const isLiked = await this._commentRepository.checkLikeComment(commentId, userId);
+    if (!isLiked) {
+      await this._commentRepository.likeComment(commentId, userId);
+    } else {
+      await this._commentRepository.unlikeComment(commentId, userId);
+    }
+  }
+
   async deleteComment(threadId, commentId, owner) {
     await this._threadRepository.checkAvailabilityThread(threadId);
     await this._commentRepository.checkAvailabilityComment(commentId);
