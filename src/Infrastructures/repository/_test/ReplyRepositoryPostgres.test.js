@@ -16,24 +16,37 @@ describe('ThreadRepositoryPostgres', () => {
     fullname: 'User 1',
   };
 
-  beforeEach(async () => {
+  const threadPayload = {
+    id: 'thread-123',
+    title: 'thread title',
+    owner: userPayload.id,
+  };
+
+  const commentPayload = {
+    id: 'comment-123',
+    content: 'thread comment',
+    threadId: threadPayload.id,
+    owner: userPayload.id,
+  };
+
+  beforeAll(async () => {
     await UsersTableTestHelper.addUser(userPayload);
+    await ThreadsTableTestHelper.addThread(threadPayload);
+    await CommentsTableTestHelper.addComment(commentPayload);
   });
 
   afterEach(async () => {
-    await ThreadsTableTestHelper.cleanTable();
-    await UsersTableTestHelper.cleanTable();
+    await RepliesTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
+    await ThreadsTableTestHelper.cleanTable();
+    await UsersTableTestHelper.cleanTable();
     await pool.end();
   });
 
   describe('addReply function', () => {
     it('should success add reply', async () => {
-      await ThreadsTableTestHelper.addThread({ title: 'thread title', owner: userPayload.id });
-      await CommentsTableTestHelper.addComment({ content: 'thread comment', owner: userPayload.id });
-
       const payload = {
         content: 'reply comment',
       };
@@ -41,17 +54,14 @@ describe('ThreadRepositoryPostgres', () => {
       const fakeIdGenerator = () => '123';
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, fakeIdGenerator);
 
-      await replyRepositoryPostgres.addReply(payload, 'comment-123', userPayload.id);
+      await replyRepositoryPostgres.addReply(payload, commentPayload.id, userPayload.id);
 
       const reply = await RepliesTableTestHelper.findReply('reply-123');
 
       expect(reply).toHaveLength(1);
     });
 
-    it('should return CreatedComment correctly', async () => {
-      await ThreadsTableTestHelper.addThread({ title: 'thread title', owner: userPayload.id });
-      await CommentsTableTestHelper.addComment({ content: 'thread comment', owner: userPayload.id });
-
+    it('should return CreatedReply object correctly', async () => {
       const payload = {
         content: 'reply comment',
       };
@@ -77,8 +87,6 @@ describe('ThreadRepositoryPostgres', () => {
     });
 
     it('should throw NotFoundError when reply has been deleted', async () => {
-      await ThreadsTableTestHelper.addThread({ title: 'thread title', owner: userPayload.id });
-      await CommentsTableTestHelper.addComment({ content: 'thread comment', owner: userPayload.id });
       await RepliesTableTestHelper.addReply({ content: 'reply comment', owner: userPayload.id });
       await RepliesTableTestHelper.deleteReply('reply-123');
 
@@ -88,8 +96,6 @@ describe('ThreadRepositoryPostgres', () => {
     });
 
     it('should not throw NotFoundError when reply available', async () => {
-      await ThreadsTableTestHelper.addThread({ title: 'thread title', owner: userPayload.id });
-      await CommentsTableTestHelper.addComment({ content: 'thread comment', owner: userPayload.id });
       await RepliesTableTestHelper.addReply({ content: 'reply comment', owner: userPayload.id });
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
 
@@ -99,8 +105,6 @@ describe('ThreadRepositoryPostgres', () => {
 
   describe('verifyReplyOwner', () => {
     it('should throw AuthorizationError when not owned reply', async () => {
-      await ThreadsTableTestHelper.addThread({ title: 'thread title', owner: userPayload.id });
-      await CommentsTableTestHelper.addComment({ content: 'thread comment', owner: userPayload.id });
       await RepliesTableTestHelper.addReply({ content: 'reply comment', owner: userPayload.id });
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
@@ -109,8 +113,6 @@ describe('ThreadRepositoryPostgres', () => {
     });
 
     it('should not throw AuthorizationError when owned comment', async () => {
-      await ThreadsTableTestHelper.addThread({ title: 'thread title', owner: userPayload.id });
-      await CommentsTableTestHelper.addComment({ content: 'thread comment', owner: userPayload.id });
       await RepliesTableTestHelper.addReply({ content: 'reply comment', owner: userPayload.id });
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
@@ -121,14 +123,15 @@ describe('ThreadRepositoryPostgres', () => {
 
   describe('deleteReply', () => {
     it('should delete reply correctly', async () => {
-      await ThreadsTableTestHelper.addThread({ title: 'thread title', owner: userPayload.id });
-      await CommentsTableTestHelper.addComment({ content: 'thread comment', owner: userPayload.id });
       await RepliesTableTestHelper.addReply({ content: 'reply comment', owner: userPayload.id });
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
 
       await replyRepositoryPostgres.deleteReply('reply-123');
-      await expect(replyRepositoryPostgres.checkAvailabilityReply('reply-123')).rejects.toThrowError(NotFoundError);
+
+      const reply = await RepliesTableTestHelper.findReply('reply-123');
+
+      expect(reply[0].is_delete).toEqual(true);
     });
   });
 });
