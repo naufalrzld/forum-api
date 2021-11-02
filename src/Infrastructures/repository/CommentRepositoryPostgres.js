@@ -67,6 +67,36 @@ class CommentRepositoryPostgres extends CommentRepository {
     }
   }
 
+  async checkLikeComment(commentId, userId) {
+    const query = {
+      text: 'SELECT * FROM liked_comments WHERE user_id = $1 AND comment_id = $2',
+      values: [userId, commentId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rowCount;
+  }
+
+  async likeComment(commentId, userId) {
+    const id = `liked-comment-${this._idGenerator()}`;
+    const query = {
+      text: 'INSERT INTO liked_comments VALUES($1, $2, $3)',
+      values: [id, userId, commentId],
+    };
+
+    await this._pool.query(query);
+  }
+
+  async unlikeComment(commentId, userId) {
+    const query = {
+      text: 'DELETE FROM liked_comments WHERE comment_id = $1 AND user_id = $2',
+      values: [commentId, userId],
+    };
+
+    await this._pool.query(query);
+  }
+
   async deleteComment(commentId) {
     const query = {
       text: 'UPDATE comments SET is_delete = true WHERE id = $1',
