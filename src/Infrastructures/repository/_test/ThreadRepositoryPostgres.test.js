@@ -13,16 +13,16 @@ describe('ThreadRepositoryPostgres', () => {
     fullname: 'User 1',
   };
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     await UsersTableTestHelper.addUser(userPayload);
   });
 
   afterEach(async () => {
     await ThreadsTableTestHelper.cleanTable();
-    await UsersTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
+    await UsersTableTestHelper.cleanTable();
     await pool.end();
   });
 
@@ -101,7 +101,7 @@ describe('ThreadRepositoryPostgres', () => {
         title: 'thread title',
         body: 'thread body',
         date: '2021-22-10T13:00:00',
-        username: 'user1',
+        username: userPayload.username,
       };
 
       const resultThread = await threadRepositoryPostgres.getDetailThread('thread-123');
